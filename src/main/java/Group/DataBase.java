@@ -31,7 +31,11 @@ public class DataBase {
 
     }
 
-    public void inputRowDB() {
+
+
+    /*Реєстрація Юзера (Admin)*/
+
+    public void inputUserAdminDB() {
 
         do {
             System.out.print("Id: ");
@@ -62,12 +66,72 @@ public class DataBase {
             preparedStatement.setInt(4, users.getAge());
 
             preparedStatement.execute();
+
+            outputCustomUsersIdAdminDB(users.getId());
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    public void outputAllRowDB() {
+    /*Реєстрація Юзера (User)*/
+
+    public void registerUserDB() {
+
+        do {
+            System.out.print("Username: ");
+            users.setUsername(scanner.next());
+
+            System.out.print("Password: ");
+            users.setPassword(scanner.next());
+
+            System.out.print("Age: ");
+            users.setAge(scanner.nextInt());
+
+
+            System.out.println("\nНатисніть 's' щоб зберегти...");
+        } while (!scanner.next().trim().equals("s"));
+
+        String inputQuery = "INSERT INTO Users (username, password, age) VALUES (?, ?, ?)";
+        String outputQuery = "SELECT id FROM Users WHERE username = ? AND password = ?";
+
+        try {
+            preparedStatement = connection.prepareStatement(inputQuery);
+
+            preparedStatement.setString(1, users.getUsername());
+            preparedStatement.setString(2, users.getPassword());
+            preparedStatement.setInt(3, users.getAge());
+
+            preparedStatement.execute();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            preparedStatement = connection.prepareStatement(outputQuery);
+
+            preparedStatement.setString(1, users.getUsername());
+            preparedStatement.setString(2, users.getPassword());
+
+            preparedStatement.execute();
+
+            resultSet = preparedStatement.executeQuery();
+            resultSet.next();
+
+            users.setId(resultSet.getInt("id"));
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        System.out.print("Вітаємо з реєстрацією!! \nВаш користувач: ");
+        outputCustomUsersIdAdminDB(users.getId());
+    }
+
+    /*Виведення усіх Юзерів (Admin)*/
+
+    public void outputAllUsersAdminDB() {
 
         String outputQuery = "SELECT * FROM Users";
 
@@ -89,17 +153,42 @@ public class DataBase {
         }
     }
 
-    public void deleteCustomRowDB() {
+    /*Виведення Юзера по його ID (Admin)*/
 
-        System.out.println("Введіть Id користувача, якого бажаєте видалити: ");
-        users.setId(scanner.nextInt());
+    public void outputCustomUsersIdAdminDB(int id) {
+
+        String getUser = "SELECT * FROM Users WHERE id = ?";
+
+        try {
+            preparedStatement = connection.prepareStatement(getUser);
+            preparedStatement.setInt(1, id);
+
+            resultSet = preparedStatement.executeQuery();
+            resultSet.next();
+
+            users.setId(resultSet.getInt("id"));
+            users.setUsername(resultSet.getString("username"));
+            users.setPassword(resultSet.getString("password"));
+            users.setAge(resultSet.getInt("age"));
+
+            System.out.println(users);
+
+        }catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    /*Видалення Юзера по його ID (Admin)*/
+
+    public void deleteCustomUsersIdAdminDB(int id) {
 
         String deleteQuery = "DELETE FROM Users WHERE id = ?";
         String getUser = "SELECT * FROM Users WHERE id = ?";
 
             try {
                 preparedStatement = connection.prepareStatement(getUser);
-                preparedStatement.setInt(1, users.getId());
+                preparedStatement.setInt(1, id);
 
                 resultSet = preparedStatement.executeQuery();
 
@@ -126,12 +215,12 @@ public class DataBase {
                         case 1:
                             try {
                                 preparedStatement = connection.prepareStatement(deleteQuery);
-                                preparedStatement.setInt(1, users.getId());
+                                preparedStatement.setInt(1, id);
                                 preparedStatement.executeUpdate();
                             }catch (SQLException e) {
                                 e.printStackTrace();
                             }
-                            System.out.println("КОРИСТУВАЧА: " + users + "ВИДАЛЕНО З БАЗИ");
+                            System.out.println("КОРИСТУВАЧА: " + users + " ВИДАЛЕНО З БАЗИ");
                             select = 4;
                             break;
 
@@ -143,34 +232,6 @@ public class DataBase {
 
     }
 
-    public void outputCustomRowDB() {
-
-        System.out.print("Введіть Id користувача, якого бажаєте переглянути: ");
-        users.setId(scanner.nextInt());
-
-        String getUser = "SELECT * FROM Users WHERE id = ?";
-
-        try {
-            preparedStatement = connection.prepareStatement(getUser);
-            preparedStatement.setInt(1, users.getId());
-
-            resultSet = preparedStatement.executeQuery();
-            resultSet.next();
-
-            users.setId(resultSet.getInt("id"));
-            users.setUsername(resultSet.getString("username"));
-            users.setPassword(resultSet.getString("password"));
-            users.setAge(resultSet.getInt("age"));
-
-            System.out.println(users);
-
-        }catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-
     public Connection getConnection() {
         return connection;
     }
@@ -181,6 +242,10 @@ public class DataBase {
 
     public ResultSet getResultSet() {
         return resultSet;
+    }
+
+    public void setResultSet(ResultSet resultSet) {
+        this.resultSet = resultSet;
     }
 
     public PreparedStatement getPreparedStatement() {

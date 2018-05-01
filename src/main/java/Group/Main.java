@@ -1,46 +1,1 @@
-package Group;
-
-import java.sql.*;
-import java.util.Scanner;
-
-public class Main {
-
-    public static void main(String[] args) {
-
-        Scanner scanner = new Scanner(System.in);
-
-        DataBase dataBase = new DataBase();
-
-
-        int select = 0;
-        do {
-            System.out.println("\nМЕНЮ: \n " +
-                    "1.Ввід користувача в базу \n " +
-                    "2.Переглянути користувачів в базі \n " +
-                    "3.ВИХІД"  );
-            System.out.print("\n Виберіть пункт меню: ");
-            select=scanner.nextInt();
-
-            switch(select){
-
-                case 1: System.out.println("\nВВІД КОРИСТУВАЧА В БАЗУ:");
-                    dataBase.InputDB();
-                    break;
-
-                case 2: System.out.println("ПЕРЕГЛЯНУТИ КОРИСТУВАЧІВ В БАЗІ:");
-                    dataBase.OutputDB();
-                    break;
-
-                default: System.out.println("EXIT");
-                    break;
-            }
-        } while (select!=3);
-
-
-
-
-
-
-    }
-
-}
+package Group;import java.sql.*;import java.util.Scanner;public class Main {    public static void main(String[] args) {        Scanner scanner = new Scanner(System.in);        DataBase dataBase = new DataBase();        int select = 0;        do {            System.out.println("\nМЕНЮ: \n " +                    "1.Ввід користувача в базу \n " +                    "2.Переглянути всіх користувачів в базі \n " +                    "3.Переглянути користувача в базі по ID \n " +                    "4.Видалення користувача з бази \n " +                    "5.ВИХІД"  );            System.out.print("\n Виберіть пункт меню: ");            select=scanner.nextInt();            switch(select){                case 1: System.out.println("\nВВІД КОРИСТУВАЧА В БАЗУ:");                    dataBase.inputRowDB();                    break;                case 2: System.out.println("\nПЕРЕГЛЯНУТИ КОРИСТУВАЧІВ В БАЗІ:");                    dataBase.outputAllRowDB();                    break;                case 3: System.out.println("\nПЕРЕГЛЯНУТИ КОРИСТУВАЧА В БАЗІ ПО ID:");                    dataBase.outputCustomRowDB();                    break;                case 4: System.out.println("\nВИДАЛЕННЯ КОРИСТУВАЧА З БАЗИ ПО ID:");                    dataBase.deleteCustomRowDB();                    break;                case 5:                    select = 5;                    break;                default: System.out.println("Не коректне введення!!! Спробуйте знову.");                    break;            }        } while (select != 5);    }}
